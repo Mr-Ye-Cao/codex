@@ -69,6 +69,7 @@ const cli = meow(
   Usage
     $ codex [options] <prompt>
     $ codex completion <bash|zsh|fish>
+    $ codex video <topic> [options]
 
   Options
     --version                       Print version and exit
@@ -116,6 +117,8 @@ const cli = meow(
     $ codex "Write and run a python program that prints ASCII art"
     $ codex -q "fix build issues"
     $ codex completion bash
+    $ codex video "quantum physics"
+    $ codex video "machine learning" --interactive --quality high
 `,
   {
     importMeta: import.meta,
@@ -251,6 +254,75 @@ complete -c codex -a '(__fish_complete_path)' -d 'file path'`,
   // eslint-disable-next-line no-console
   console.log(script);
   process.exit(0);
+}
+
+// Handle 'video' subcommand for educational video generation
+if (cli.input[0] === "video") {
+  try {
+    const { VideoPipelineCLI } = await import("./video-pipeline/cli.js");
+    
+    // Parse video-specific options
+    const topic = cli.input[1] || "";
+    const options = {
+      count: cli.input.includes("--count") ? parseInt(cli.input[cli.input.indexOf("--count") + 1]) : 3,
+      duration: cli.input.includes("--duration") ? parseInt(cli.input[cli.input.indexOf("--duration") + 1]) : undefined,
+      quality: cli.input.includes("--quality") ? (cli.input[cli.input.indexOf("--quality") + 1] as "draft" | "standard" | "high" | "ultra" | undefined) : undefined,
+      models: cli.input.includes("--models") ? (cli.input[cli.input.indexOf("--models") + 1] as "fast" | "balanced" | "quality" | "experimental" | undefined) : undefined,
+      interactive: cli.input.includes("--interactive") || cli.input.includes("-i"),
+      config: cli.input.includes("--config") ? cli.input[cli.input.indexOf("--config") + 1] : undefined,
+    };
+
+    // Handle video subcommands
+    if (cli.input[1] === "config") {
+      const videoCli = new VideoPipelineCLI(options);
+      videoCli.showConfig();
+      process.exit(0);
+    }
+
+    if (cli.input[1] === "presets") {
+      const videoCli = new VideoPipelineCLI(options);
+      videoCli.showPresets();
+      process.exit(0);
+    }
+
+    if (cli.input[1] === "example") {
+      console.log('🎬 Video Pipeline Examples');
+      console.log('==========================\n');
+      
+      console.log('Basic usage:');
+      console.log('  codex video "black holes"');
+      console.log('  codex video "quantum mechanics" --count 5');
+      console.log('  codex video "relativity" --duration 60 --quality high\n');
+      
+      console.log('Interactive mode:');
+      console.log('  codex video "physics" --interactive\n');
+      
+      console.log('Advanced usage:');
+      console.log('  codex video "mathematics" --models quality --config ./my-config.json');
+      console.log('  codex video "computer science" --quality ultra --models experimental\n');
+      
+      console.log('Configuration:');
+      console.log('  codex video config         # Show current settings');
+      console.log('  codex video presets        # Show available presets');
+      process.exit(0);
+    }
+
+    if (!topic) {
+      console.error('❌ Please provide a topic for video generation.');
+      console.error('Usage: codex video <topic> [options]');
+      console.error('Example: codex video "quantum physics"');
+      console.error('For help: codex video example');
+      process.exit(1);
+    }
+
+    const videoCli = new VideoPipelineCLI(options);
+    await videoCli.run(topic, options);
+    process.exit(0);
+
+  } catch (error) {
+    console.error('❌ Video pipeline failed:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
 }
 
 // For --help, show help and exit.

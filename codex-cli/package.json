@@ -50,6 +50,8 @@
     "strip-ansi": "^7.1.0",
     "to-rotated": "^1.0.0",
     "use-interval": "1.4.0",
+    "uuid": "^11.0.3",
+    "inquirer": "^12.1.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
@@ -61,6 +63,8 @@
     "@types/react": "^18.0.32",
     "@types/semver": "^7.7.0",
     "@types/shell-quote": "^1.7.5",
+    "@types/uuid": "^10.0.0",
+    "@types/inquirer": "^9.0.7",
     "@types/which": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
