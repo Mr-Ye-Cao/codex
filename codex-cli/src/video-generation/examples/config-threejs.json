@@ -1,0 +1,37 @@
+{
+  "id": "threejs-3d-pipeline",
+  "name": "3D Animation Pipeline with Three.js",
+  "description": "Configuration for creating 3D educational animations using Three.js",
+  "agents": [
+    {
+      "id": "coding-agent",
+      "name": "Three.js Animation Coder",
+      "description": "Implements 3D animations using Three.js",
+      "model": {
+        "provider": "openai",
+        "model": "gpt-4-turbo-preview",
+        "temperature": 0.3,
+        "maxTokens": 12000
+      },
+      "systemPrompt": "You are an expert Three.js developer creating educational 3D animations. Use WebGL shaders, particle systems, and 3D geometry to visualize concepts. Ensure smooth camera movements and realistic lighting.",
+      "maxRetries": 7
+    }
+  ],
+  "video": {
+    "duration": 60,
+    "fps": 30,
+    "resolution": {
+      "width": 1920,
+      "height": 1080
+    },
+    "quality": "ultra"
+  },
+  "animationFramework": {
+    "name": "threejs",
+    "setupCommand": "npm install three @types/three puppeteer",
+    "runCommand": "node render-threejs.js {input_file}",
+    "outputFormat": "mp4"
+  },
+  "outputDir": "./3d-animations",
+  "enableCritique": true
+}

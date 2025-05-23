@@ -1,0 +1,99 @@
+{
+  "id": "black-holes-pipeline",
+  "name": "Black Holes Educational Video Pipeline",
+  "description": "Specialized configuration for creating videos about black holes and relativity",
+  "agents": [
+    {
+      "id": "ideation-agent",
+      "name": "Physics Topic Ideation Agent",
+      "description": "Generates topics focused on astrophysics and relativity",
+      "model": {
+        "provider": "openai",
+        "model": "gpt-4-turbo-preview",
+        "temperature": 0.9
+      },
+      "systemPrompt": "You are an astrophysics education expert. Focus on black holes, relativity, spacetime, and gravitational phenomena. Prioritize topics that showcase warping of space, time dilation, and event horizons."
+    },
+    {
+      "id": "director-agent",
+      "name": "Physics Visualization Director",
+      "description": "Creates visualizations for complex physics concepts",
+      "model": {
+        "provider": "anthropic",
+        "model": "claude-3-opus-20240229",
+        "temperature": 0.7
+      },
+      "systemPrompt": "You are directing physics animations in the style of 3Blue1Brown. Use grid deformations for spacetime, particle trajectories, and mathematical equations. Emphasize visual clarity for abstract concepts."
+    }
+  ],
+  "video": {
+    "duration": 45,
+    "fps": 60,
+    "resolution": {
+      "width": 1920,
+      "height": 1080
+    },
+    "quality": "high"
+  },
+  "stages": [
+    {
+      "id": "ideation",
+      "name": "Physics Topic Ideation",
+      "agent": "ideation-agent",
+      "inputs": ["topic"],
+      "outputs": ["ideas"],
+      "timeout": 90
+    },
+    {
+      "id": "direction",
+      "name": "Physics Visualization Planning",
+      "agent": "director-agent",
+      "inputs": ["selected_ideas"],
+      "outputs": ["scene_plans"],
+      "timeout": 180
+    },
+    {
+      "id": "animation",
+      "name": "Manim Animation",
+      "agent": "coding-agent",
+      "inputs": ["scene_plans"],
+      "outputs": ["animation_code", "video_file"],
+      "timeout": 900,
+      "retryOnFailure": true
+    },
+    {
+      "id": "voice-script",
+      "name": "Physics Narration",
+      "agent": "voice-agent",
+      "inputs": ["scene_plans", "animation_code"],
+      "outputs": ["voice_script"],
+      "timeout": 150
+    },
+    {
+      "id": "voice-synthesis",
+      "name": "Voice Generation",
+      "agent": "none",
+      "inputs": ["voice_script"],
+      "outputs": ["audio_file"],
+      "timeout": 90
+    },
+    {
+      "id": "final-assembly",
+      "name": "Video Assembly",
+      "agent": "none",
+      "inputs": ["video_file", "audio_file"],
+      "outputs": ["final_video"],
+      "timeout": 180
+    }
+  ],
+  "animationFramework": {
+    "name": "manim",
+    "version": "latest",
+    "setupCommand": "pip install manim numpy scipy",
+    "runCommand": "manim render -qh --fps {fps} {input_file} {scene_name}",
+    "outputFormat": "mp4"
+  },
+  "outputDir": "./physics-videos",
+  "enableCritique": true,
+  "critiqueAgent": "critique-agent"
+}
