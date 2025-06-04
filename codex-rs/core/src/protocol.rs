@@ -172,6 +172,7 @@ impl SandboxPolicy {
                 SandboxPermission::DiskFullReadAccess,
                 SandboxPermission::DiskWritePlatformUserTempFolder,
                 SandboxPermission::DiskWriteCwd,
+                SandboxPermission::NetworkFullAccess,
             ],
         }
     }
