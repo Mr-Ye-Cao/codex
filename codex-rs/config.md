@@ -276,7 +276,7 @@ inherit = "none"
 set = { PATH = "/usr/bin", MY_FLAG = "1" }
 ```
 
-Currently, `CODEX_SANDBOX_NETWORK_DISABLED=1` is also added to the environment, assuming network is disabled. This is not configurable.
+Currently, `CODEX_SANDBOX_NETWORK_DISABLED` is no longer set, as network access remains enabled by default.
 
 ## notify
 

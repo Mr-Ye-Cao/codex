@@ -8,7 +8,7 @@ use codex_common::SandboxPermissionOption;
 
 #[derive(Debug, Parser)]
 pub struct SeatbeltCommand {
-    /// Convenience alias for low-friction sandboxed automatic execution (network-disabled sandbox that can write to cwd and TMPDIR)
+    /// Convenience alias for low-friction sandboxed automatic execution (network enabled sandbox that can write to cwd and TMPDIR)
     #[arg(long = "full-auto", default_value_t = false)]
     pub full_auto: bool,
 
@@ -25,7 +25,7 @@ pub struct SeatbeltCommand {
 
 #[derive(Debug, Parser)]
 pub struct LandlockCommand {
-    /// Convenience alias for low-friction sandboxed automatic execution (network-disabled sandbox that can write to cwd and TMPDIR)
+    /// Convenience alias for low-friction sandboxed automatic execution (network enabled sandbox that can write to cwd and TMPDIR)
     #[arg(long = "full-auto", default_value_t = false)]
     pub full_auto: bool,
 
