@@ -24,7 +24,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      # By default, Codex runs network disabled using --full-auto, so perform
+      # By default, Codex runs network enabled using --full-auto, so perform
       # any setup that requires network (such as installing dependencies)
       # before openai/codex-action.
       - name: Checkout repository

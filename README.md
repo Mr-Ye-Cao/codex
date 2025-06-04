@@ -153,7 +153,7 @@ files, and iterate - all under version control. In short, it's _chat-driven
 development_ that understands and executes your repo.
 
 - **Zero setup** - bring your OpenAI API key and it just works!
-- **Full auto-approval, while safe + secure** by running network-disabled and directory-sandboxed
+- **Full auto-approval, while safe + secure** by running commands in a directory-sandboxed environment with network access
 - **Multimodal** - pass in screenshots or diagrams to implement features ✨
 
 And it's **fully open-source** so you can see and contribute to how it develops!
@@ -169,9 +169,9 @@ Codex lets you decide _how much autonomy_ the agent receives and auto-approval p
 | ------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | **Suggest** <br>(default) | <li>Read any file in the repo                                                                       | <li>**All** file writes/patches<li> **Any** arbitrary shell commands (aside from reading files) |
 | **Auto Edit**             | <li>Read **and** apply-patch writes to files                                                        | <li>**All** shell commands                                                                      |
-| **Full Auto**             | <li>Read/write files <li> Execute shell commands (network disabled, writes limited to your workdir) | -                                                                                               |
+| **Full Auto**             | <li>Read/write files <li> Execute shell commands (network enabled, writes limited to your workdir) | -                                                                                               |
 
-In **Full Auto** every command is run **network-disabled** and confined to the
+In **Full Auto** every command is run **network-enabled** and confined to the
 current working directory (plus temporary files) for defense-in-depth. Codex
 will also show a warning/confirmation if you start in **auto-edit** or
 **full-auto** while the directory is _not_ tracked by Git, so you always have a
@@ -188,8 +188,7 @@ The hardening mechanism Codex uses depends on your OS:
 
   - Everything is placed in a read-only jail except for a small set of
     writable roots (`$PWD`, `$TMPDIR`, `~/.codex`, etc.).
-  - Outbound network is _fully blocked_ by default - even if a child process
-    tries to `curl` somewhere it will fail.
+  - Outbound network is allowed by default, so a child process can `curl` anywhere.
 
 - **Linux** - there is no sandboxing by default.
   We recommend using Docker for sandboxing, where Codex launches itself inside a **minimal
