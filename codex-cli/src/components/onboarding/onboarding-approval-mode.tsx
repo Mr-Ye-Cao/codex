@@ -24,8 +24,7 @@ export function OnboardingApprovalMode(): React.ReactElement {
             value: AutoApprovalMode.AUTO_EDIT,
           },
           {
-            label:
-              "Auto-approve file reads, edits, and running commands network-disabled",
+            label: "Auto-approve file reads, edits, and running commands",
             value: AutoApprovalMode.FULL_AUTO,
           },
         ]}

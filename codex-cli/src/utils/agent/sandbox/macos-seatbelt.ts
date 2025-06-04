@@ -99,6 +99,10 @@ const READ_ONLY_SEATBELT_POLICY = `
     (path "/dev/null")
     (vnode-type CHARACTER-DEVICE)))
 
+; allow network access
+(allow network*)
+(allow system-socket)
+
 ; sysctls permitted.
 (allow sysctl-read
   (sysctl-name "hw.activecpu")
