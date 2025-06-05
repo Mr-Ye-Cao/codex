@@ -18,6 +18,7 @@ import {
   OPENAI_ORGANIZATION,
   OPENAI_PROJECT,
   getBaseUrl,
+  getApiKey,
   AZURE_OPENAI_API_VERSION,
 } from "../config.js";
 import { log } from "../logger/log.js";
@@ -306,7 +307,7 @@ export class AgentLoop {
     this.sessionId = getSessionId() || randomUUID().replaceAll("-", "");
     // Configure OpenAI client with optional timeout (ms) from environment
     const timeoutMs = OPENAI_TIMEOUT_MS;
-    const apiKey = this.config.apiKey ?? process.env["OPENAI_API_KEY"] ?? "";
+    const apiKey = this.config.apiKey ?? getApiKey(this.provider) ?? "";
     const baseURL = getBaseUrl(this.provider);
 
     this.oai = new OpenAI({
@@ -322,10 +323,13 @@ export class AgentLoop {
         originator: ORIGIN,
         version: CLI_VERSION,
         session_id: this.sessionId,
-        ...(OPENAI_ORGANIZATION
+        // Only add OpenAI-specific headers for OpenAI provider
+        ...(this.provider.toLowerCase() === "openai" && OPENAI_ORGANIZATION
           ? { "OpenAI-Organization": OPENAI_ORGANIZATION }
           : {}),
-        ...(OPENAI_PROJECT ? { "OpenAI-Project": OPENAI_PROJECT } : {}),
+        ...(this.provider.toLowerCase() === "openai" && OPENAI_PROJECT
+          ? { "OpenAI-Project": OPENAI_PROJECT }
+          : {}),
       },
       httpAgent: PROXY_URL ? new HttpsProxyAgent(PROXY_URL) : undefined,
       ...(timeoutMs !== undefined ? { timeout: timeoutMs } : {}),
