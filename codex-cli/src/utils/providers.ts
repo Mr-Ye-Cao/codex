@@ -52,4 +52,9 @@ export const providers: Record<
     baseURL: "https://conductor.arcee.ai/v1",
     envKey: "ARCEEAI_API_KEY",
   },
+  qwen: {
+    name: "Qwen",
+    baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    envKey: "QWEN_API_KEY",
+  },
 };

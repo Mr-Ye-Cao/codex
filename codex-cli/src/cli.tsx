@@ -36,6 +36,7 @@ import {
   loadConfig,
   PRETTY_PRINT,
   INSTRUCTIONS_FILEPATH,
+  getApiKey,
 } from "./utils/config";
 import {
   getApiKey as fetchApiKey,
@@ -307,6 +308,15 @@ let savedTokens:
     }
   | undefined;
 
+// Check for provider-specific API key from environment first
+const NO_API_KEY_REQUIRED = new Set(["ollama"]);
+if (!NO_API_KEY_REQUIRED.has(provider.toLowerCase())) {
+  const providerApiKey = getApiKey(provider);
+  if (providerApiKey) {
+    apiKey = providerApiKey;
+  }
+}
+
 // Try to load existing auth file if present
 try {
   const home = os.homedir();
@@ -319,7 +329,12 @@ try {
       ? new Date(data.last_refresh).getTime()
       : 0;
     const expired = Date.now() - lastRefreshTime > 28 * 24 * 60 * 60 * 1000;
-    if (data.OPENAI_API_KEY && !expired) {
+    // Only use auth file API key for OpenAI provider
+    if (
+      data.OPENAI_API_KEY &&
+      !expired &&
+      provider.toLowerCase() === "openai"
+    ) {
       apiKey = data.OPENAI_API_KEY;
     }
   }
@@ -361,9 +376,6 @@ if (cli.flags.free) {
     );
   }
 }
-
-// Set of providers that don't require API keys
-const NO_API_KEY_REQUIRED = new Set(["ollama"]);
 
 // Skip API key validation for providers that don't require an API key
 if (!apiKey && !NO_API_KEY_REQUIRED.has(provider.toLowerCase())) {
