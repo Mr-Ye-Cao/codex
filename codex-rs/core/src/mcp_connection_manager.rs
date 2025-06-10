@@ -101,7 +101,7 @@ impl McpConnectionManager {
                             protocol_version: mcp_types::MCP_SCHEMA_VERSION.to_owned(),
                         };
                         let initialize_notification_params = None;
-                        let timeout = Some(Duration::from_secs(10));
+                        let timeout = Some(Duration::from_secs(30)); // Increased timeout for slow-starting MCP servers
                         match client
                             .initialize(params, initialize_notification_params, timeout)
                             .await
