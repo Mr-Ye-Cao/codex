@@ -164,6 +164,16 @@ pub fn built_in_model_providers() -> HashMap<String, ModelProviderInfo> {
                 wire_api: WireApi::Chat,
             },
         ),
+        (
+            "anthropic",
+            P {
+                name: "Anthropic".into(),
+                base_url: "https://api.anthropic.com/v1".into(),
+                env_key: Some("ANTHROPIC_API_KEY".into()),
+                env_key_instructions: Some("Create an API key at https://console.anthropic.com and export it as ANTHROPIC_API_KEY".into()),
+                wire_api: WireApi::Chat,
+            },
+        ),
     ]
     .into_iter()
     .map(|(k, v)| (k.to_string(), v))
