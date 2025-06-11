@@ -16,6 +16,7 @@ use codex_mcp_client::McpClient;
 use mcp_types::ClientCapabilities;
 use mcp_types::Implementation;
 use mcp_types::Tool;
+use serde_json;
 use tokio::task::JoinSet;
 use tracing::info;
 
@@ -90,9 +91,9 @@ impl McpConnectionManager {
                         // Initialize the client.
                         let params = mcp_types::InitializeRequestParams {
                             capabilities: ClientCapabilities {
-                                experimental: None,
-                                roots: None,
-                                sampling: None,
+                                experimental: Some(serde_json::json!({})),
+                                roots: Some(mcp_types::ClientCapabilitiesRoots { list_changed: None }),
+                                sampling: Some(serde_json::json!({})),
                             },
                             client_info: Implementation {
                                 name: "codex-mcp-client".to_owned(),
@@ -101,7 +102,7 @@ impl McpConnectionManager {
                             protocol_version: mcp_types::MCP_SCHEMA_VERSION.to_owned(),
                         };
                         let initialize_notification_params = None;
-                        let timeout = Some(Duration::from_secs(30)); // Increased timeout for slow-starting MCP servers
+                        let timeout = Some(Duration::from_secs(300)); // 5 minute timeout for very slow servers
                         match client
                             .initialize(params, initialize_notification_params, timeout)
                             .await

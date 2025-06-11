@@ -86,13 +86,14 @@ impl McpClient {
         args: Vec<String>,
         env: Option<HashMap<String, String>>,
     ) -> std::io::Result<Self> {
+        info!("Creating MCP client for program: {} args: {:?}", program, args);
         let mut child = Command::new(program)
             .args(args)
             .env_clear()
             .envs(create_env_for_mcp_server(env))
             .stdin(std::process::Stdio::piped())
             .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::null())
+            .stderr(std::process::Stdio::inherit())
             // As noted in the `kill_on_drop` documentation, the Tokio runtime makes
             // a "best effort" to reap-after-exit to avoid zombie processes, but it
             // is not a guarantee.
@@ -116,6 +117,7 @@ impl McpClient {
         let writer_handle = {
             let mut stdin = stdin;
             tokio::spawn(async move {
+                info!("MCP writer task started");
                 while let Some(msg) = outgoing_rx.recv().await {
                     match serde_json::to_string(&msg) {
                         Ok(json) => {
@@ -146,8 +148,11 @@ impl McpClient {
             let mut lines = BufReader::new(stdout).lines();
 
             tokio::spawn(async move {
-                while let Ok(Some(line)) = lines.next_line().await {
-                    debug!("MCP message from server: {line}");
+                info!("MCP reader task started");
+                loop {
+                    match lines.next_line().await {
+                        Ok(Some(line)) => {
+                            debug!("MCP message from server: {line}");
                     match serde_json::from_str::<JSONRPCMessage>(&line) {
                         Ok(JSONRPCMessage::Response(resp)) => {
                             Self::dispatch_response(resp, &pending).await;
@@ -168,7 +173,18 @@ impl McpClient {
                             error!("failed to deserialize JSONRPCMessage: {e}; line = {}", line)
                         }
                     }
+                        }
+                        Ok(None) => {
+                            info!("MCP reader: EOF reached");
+                            break;
+                        }
+                        Err(e) => {
+                            error!("MCP reader error: {}", e);
+                            break;
+                        }
+                    }
                 }
+                info!("MCP reader task ending");
             })
         };
 
@@ -177,6 +193,10 @@ impl McpClient {
         // stdout) are alive. Dropping `McpClient` cancels the tasks due to
         // dropped resources.
         let _ = (writer_handle, reader_handle);
+
+        // Add a small delay to ensure tasks are started
+        tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+        info!("MCP client created successfully");
 
         Ok(Self {
             child,
@@ -425,6 +445,10 @@ const DEFAULT_ENV_VARS: &[&str] = &[
     "TERM",
     "TMPDIR",
     "TZ",
+    
+    // Node.js environment variables that might be needed
+    "NODE_PATH",
+    "NODE_ENV",
 ];
 
 #[cfg(windows)]
@@ -444,14 +468,21 @@ const DEFAULT_ENV_VARS: &[&str] = &[
 fn create_env_for_mcp_server(
     extra_env: Option<HashMap<String, String>>,
 ) -> HashMap<String, String> {
-    DEFAULT_ENV_VARS
+    let mut env: HashMap<String, String> = DEFAULT_ENV_VARS
         .iter()
         .filter_map(|var| match std::env::var(var) {
             Ok(value) => Some((var.to_string(), value)),
             Err(_) => None,
         })
         .chain(extra_env.unwrap_or_default())
-        .collect::<HashMap<_, _>>()
+        .collect();
+    
+    // Force unbuffered output for better subprocess communication
+    env.insert("PYTHONUNBUFFERED".to_string(), "1".to_string());
+    env.insert("NODE_NO_READLINE".to_string(), "1".to_string());
+    env.insert("FORCE_COLOR".to_string(), "0".to_string());
+    
+    env
 }
 
 #[cfg(test)]
