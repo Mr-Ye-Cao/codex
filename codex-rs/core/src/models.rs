@@ -89,8 +89,14 @@ impl From<ResponseInputItem> for ResponseItem {
                     content: result.map_or_else(
                         |tool_call_err| format!("err: {tool_call_err:?}"),
                         |result| {
-                            serde_json::to_string(&result)
-                                .unwrap_or_else(|e| format!("JSON serialization error: {e}"))
+                            // Check if the result has empty content
+                            if result.content.is_empty() {
+                                // Return a meaningful message for empty results
+                                "Tool executed successfully (no output)".to_string()
+                            } else {
+                                serde_json::to_string(&result)
+                                    .unwrap_or_else(|e| format!("JSON serialization error: {e}"))
+                            }
                         },
                     ),
                 },

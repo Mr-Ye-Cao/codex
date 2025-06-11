@@ -39,21 +39,46 @@ pub(crate) async fn stream_chat_completions(
     let mut messages = Vec::<serde_json::Value>::new();
 
     let full_instructions = prompt.get_full_instructions(model);
-    messages.push(json!({"role": "system", "content": full_instructions}));
+    // Ensure system message is never empty for Anthropic
+    if provider.name.to_lowercase() == "anthropic" && full_instructions.trim().is_empty() {
+        messages.push(json!({"role": "system", "content": "You are a helpful assistant."}));
+    } else {
+        messages.push(json!({"role": "system", "content": full_instructions}));
+    }
 
     for item in &prompt.input {
         match item {
             ResponseItem::Message { role, content } => {
                 let mut text = String::new();
+                let mut has_images = false;
                 for c in content {
                     match c {
                         ContentItem::InputText { text: t }
                         | ContentItem::OutputText { text: t } => {
                             text.push_str(t);
                         }
-                        _ => {}
+                        ContentItem::InputImage { .. } => {
+                            has_images = true;
+                        }
                     }
                 }
+                
+                // Skip completely empty messages (no text, no images)
+                if text.trim().is_empty() && !has_images {
+                    continue;
+                }
+                
+                // For Anthropic API specifically, ensure we never send empty or whitespace-only content
+                // Even with images, Anthropic requires non-empty text content
+                if provider.name.to_lowercase() == "anthropic" && text.trim().is_empty() {
+                    if has_images {
+                        text = "[Image]".to_string();
+                    } else {
+                        // Skip this message entirely for Anthropic if it would be empty
+                        continue;
+                    }
+                }
+                
                 messages.push(json!({"role": role, "content": text}));
             }
             ResponseItem::FunctionCall {
@@ -93,10 +118,17 @@ pub(crate) async fn stream_chat_completions(
                 }));
             }
             ResponseItem::FunctionCallOutput { call_id, output } => {
+                // For Anthropic, ensure tool responses are never empty
+                let content = if provider.name.to_lowercase() == "anthropic" && output.content.trim().is_empty() {
+                    "Tool executed successfully".to_string()
+                } else {
+                    output.content.clone()
+                };
+                
                 messages.push(json!({
                     "role": "tool",
                     "tool_call_id": call_id,
-                    "content": output.content,
+                    "content": content,
                 }));
             }
             ResponseItem::Reasoning { .. } | ResponseItem::Other => {
