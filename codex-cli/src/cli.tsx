@@ -45,6 +45,7 @@ import { createInputItem } from "./utils/input-utils";
 import { initLogger } from "./utils/logger/log";
 import { isModelSupportedForResponses } from "./utils/model-utils.js";
 import { parseToolCall } from "./utils/parsers";
+import { runExploration } from "./utils/question-engine/autonomous-explorer";
 import { onExit, setInkRenderer } from "./utils/terminal";
 import chalk from "chalk";
 import { spawnSync } from "child_process";
@@ -85,6 +86,7 @@ const cli = meow(
     -c, --config                    Open the instructions file in your editor
     -w, --writable-root <path>      Writable folder for sandbox in full-auto mode (can be specified multiple times)
     -a, --approval-mode <mode>      Override the approval policy: 'suggest', 'auto-edit', or 'full-auto'
+    --explore                       Enable autonomous exploration mode (requires explicit consent)
 
     --auto-edit                Automatically approve file edits; still prompt for commands
     --full-auto                Automatically approve edits and commands when executed in the sandbox
@@ -212,6 +214,11 @@ const cli = meow(
         aliases: ["f"],
         description: `Run in full-context editing approach. The model is given the whole code
           directory as context and performs changes in one go without acting.`,
+      },
+      
+      explore: {
+        type: "boolean",
+        description: "Enable autonomous exploration mode with question engine",
       },
     },
   },
@@ -513,6 +520,20 @@ if (fullContextMode) {
     config,
     rootPath: process.cwd(),
   });
+  onExit();
+  process.exit(0);
+}
+
+// For --explore, run the autonomous exploration mode
+if (cli.flags.explore) {
+  // eslint-disable-next-line no-console
+  console.log(chalk.cyan("Starting exploration mode..."));
+  try {
+    await runExploration(prompt);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(chalk.red("\nExploration error:"), error);
+  }
   onExit();
   process.exit(0);
 }

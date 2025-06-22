@@ -1,0 +1,67 @@
+# Exploration Policy Configuration
+# Copy this to ~/.codex/exploration-policy.yaml and customize
+
+exploration:
+  # MUST be set to true to enable exploration
+  enabled: false
+  
+  # Paths the agent is allowed to explore
+  allowed_paths:
+    - "~/Downloads"
+    - "~/Desktop"
+    - "~/Documents"
+  
+  # Paths that should never be explored
+  excluded_paths:
+    - "~/.ssh"
+    - "~/.aws"
+    - "~/.config"
+    - "*/credentials*"
+    - "*/secrets*"
+    - "*/.env"
+  
+  # File types to analyze
+  file_types:
+    allowed: 
+      - ".txt"
+      - ".md" 
+      - ".json"
+      - ".yaml"
+      - ".pdf"
+      - ".doc"
+      - ".docx"
+      - ".jpg"
+      - ".png"
+      - ".csv"
+    max_size_mb: 10
+  
+  # Privacy settings
+  privacy:
+    # Patterns to redact from findings
+    redact_patterns:
+      # Email addresses
+      - "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+      # Phone numbers
+      - "\\b(?:\\+?1[-.]?)?\\(?[0-9]{3}\\)?[-.]?[0-9]{3}[-.]?[0-9]{4}\\b"
+      # SSN-like patterns
+      - "\\b(?:\\d{3}-){2}\\d{4}\\b"
+      # Credit card-like patterns
+      - "\\b(?:\\d{4}[- ]?){3}\\d{4}\\b"
+  
+  # Resource limits
+  limits:
+    max_hours: 2
+    max_files: 1000
+    max_questions_per_session: 100
+    
+  # Observation settings
+  observations:
+    # Types of observations to make
+    enabled_categories:
+      - interests
+      - habits
+      - traits
+      - work_patterns
+    
+    # Confidence threshold for reporting observations
+    min_confidence: 0.6
