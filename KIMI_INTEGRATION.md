@@ -4,7 +4,7 @@ This document describes how we integrated the Kimi model (Moonshot AI) with the 
 
 ## Overview
 
-We successfully integrated Kimi's language models (moonshot-v1-auto and kimi-chat-pro) into the Codex agentic infrastructure, enabling it to execute tasks using Moonshot AI's API.
+We successfully integrated Kimi's language models (moonshot-v1-auto, kimi-chat-pro, and kimi-k2-0711-preview) into the Codex agentic infrastructure, enabling it to execute tasks using Moonshot AI's API.
 
 ## Integration Steps
 
@@ -31,6 +31,10 @@ moonshot: {
   label: "Moonshot v1 Auto",
   maxContextLength: 128000,
 },
+"kimi-k2-0711-preview": {
+  label: "Kimi K2 Preview",
+  maxContextLength: 128000,
+},
 ```
 
 ### 2. Rust Configuration
@@ -39,7 +43,7 @@ The Rust side configuration is handled through the `~/.codex/config.toml` file:
 
 ```toml
 # Default model configuration
-model = "moonshot-v1-auto"
+model = "kimi-k2-0711-preview"  # Can also use "moonshot-v1-auto" or "kimi-chat-pro"
 model_provider = "moonshot"
 
 # Kimi-K2 Model Provider Configuration
@@ -88,6 +92,8 @@ There are several ways to use Kimi with Codex:
 
 3. **Specifying a different model**:
    ```bash
+   codex exec --model kimi-k2-0711-preview "Your prompt here"
+   codex exec --model moonshot-v1-auto "Your prompt here"
    codex exec --model kimi-chat-pro "Your prompt here"
    ```
 
@@ -101,8 +107,9 @@ codex exec "Count ONLY regular files (not directories) in the current directory"
 ## Key Findings
 
 1. **Model Names**: The working model names are:
-   - `moonshot-v1-auto` (recommended, auto-selects best model)
-   - `kimi-chat-pro` (specific model, but may require permissions)
+   - `kimi-k2-0711-preview` (Latest Kimi K2 model, recommended)
+   - `moonshot-v1-auto` (Auto-selects best available model)
+   - `kimi-chat-pro` (Specific model, but may require permissions)
 
 2. **Provider Specification**: Unlike some expectations, Codex doesn't parse "provider:model" syntax. Instead:
    - Provider is set via `model_provider` in config or defaults
@@ -114,7 +121,7 @@ codex exec "Count ONLY regular files (not directories) in the current directory"
 
 ## Troubleshooting
 
-1. **404 Model Not Found**: Use `moonshot-v1-auto` instead of `kimi-chat-pro` if you get permission errors
+1. **404 Model Not Found**: Use `kimi-k2-0711-preview` or `moonshot-v1-auto` instead of `kimi-chat-pro` if you get permission errors
 
 2. **Missing persistence field**: Ensure your config.toml has:
    ```toml
@@ -125,6 +132,34 @@ codex exec "Count ONLY regular files (not directories) in the current directory"
 3. **API Key Issues**: 
    - Verify the key is exported: `echo $MOONSHOT_API_KEY`
    - Check key validity at https://platform.moonshot.ai
+
+## Direct API Usage (JavaScript/Node.js)
+
+You can also use the Kimi K2 model directly with the OpenAI SDK:
+
+```javascript
+const OpenAI = require("openai")
+ 
+const client = new OpenAI({
+    apiKey: process.env.MOONSHOT_API_KEY,
+    baseURL: "https://api.moonshot.ai/v1",
+})
+ 
+async function main(){
+    const completion = await client.chat.completions.create({
+        model: "kimi-k2-0711-preview",
+        messages: [
+            {"role": "system", "content": "You are Kimi, an AI assistant provided by Moonshot AI."},
+            {"role": "user", "content": "Hello!"}
+        ],
+        temperature: 0.6,
+    })
+     
+    console.log(completion.choices[0].message.content)
+}
+ 
+main()
+```
 
 ## Architecture Notes
 

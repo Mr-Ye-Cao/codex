@@ -207,4 +207,8 @@ export const openAiModelInfo = {
     label: "Moonshot v1 Auto",
     maxContextLength: 128000,
   },
+  "kimi-k2-0711-preview": {
+    label: "Kimi K2 Preview",
+    maxContextLength: 128000,
+  },
 } as const satisfies Record<string, ModelInfo>;
