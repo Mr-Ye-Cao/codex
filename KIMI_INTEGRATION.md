@@ -104,6 +104,20 @@ We tested the integration by asking Kimi to count files:
 codex exec "Count ONLY regular files (not directories) in the current directory"
 ```
 
+## Tool Calling Support
+
+Kimi K2 has full tool calling support through Codex! The integration successfully handles:
+- **File operations**: Create, read, and modify files
+- **Shell commands**: Execute sandboxed shell commands
+- **MCP tools**: Support for external MCP server tools
+
+### Tool Calling Example
+```bash
+codex exec --model kimi-k2-0711-preview "Create a file called hello.txt with 'Hello from Kimi!' and show its contents"
+```
+
+The Kimi K2 model uses a special tool calling format internally, but this is automatically handled by the Codex infrastructure, making it transparent to users.
+
 ## Key Findings
 
 1. **Model Names**: The working model names are:

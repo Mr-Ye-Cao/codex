@@ -66,6 +66,12 @@ pub(crate) fn get_model_info(name: &str) -> Option<ModelInfo> {
             max_output_tokens: 4_096,
         }),
 
+        // Moonshot AI Kimi models
+        "kimi-k2-0711-preview" | "moonshot-v1-auto" | "kimi-chat-pro" => Some(ModelInfo {
+            context_window: 128_000,
+            max_output_tokens: 8_192,
+        }),
+
         _ => None,
     }
 }
