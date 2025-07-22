@@ -52,4 +52,9 @@ export const providers: Record<
     baseURL: "https://conductor.arcee.ai/v1",
     envKey: "ARCEEAI_API_KEY",
   },
+  moonshot: {
+    name: "Moonshot AI",
+    baseURL: "https://api.moonshot.cn/v1",
+    envKey: "MOONSHOT_API_KEY",
+  },
 };

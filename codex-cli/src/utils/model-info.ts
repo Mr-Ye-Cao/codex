@@ -199,4 +199,12 @@ export const openAiModelInfo = {
     label: "GPT-4 (1106) Preview",
     maxContextLength: 128000,
   },
+  "kimi-chat-pro": {
+    label: "Kimi Chat Pro",
+    maxContextLength: 128000,
+  },
+  "moonshot-v1-auto": {
+    label: "Moonshot v1 Auto",
+    maxContextLength: 128000,
+  },
 } as const satisfies Record<string, ModelInfo>;
