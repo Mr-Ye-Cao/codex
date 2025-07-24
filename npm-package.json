@@ -1,0 +1,36 @@
+{
+  "name": "codex-kimi-cli",
+  "version": "1.0.0",
+  "description": "Codex CLI with Kimi K2 model support - npm wrapper package",
+  "main": "npm-wrapper.js",
+  "bin": {
+    "codex-kimi": "bin/codex-kimi.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests defined\" && exit 0"
+  },
+  "files": [
+    "bin/",
+    "npm-wrapper.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ai",
+    "cli",
+    "codex",
+    "kimi",
+    "moonshot",
+    "claude"
+  ],
+  "author": "Your Name",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/your-repo.git"
+  }
+}
