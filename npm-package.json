@@ -1,5 +1,5 @@
 {
-  "name": "@hardwarex/codex-kimi",
+  "name": "codex-kimi-hardwarex",
   "version": "1.0.0",
   "description": "Codex CLI with Kimi K2 model integration - seamless AI coding assistant",
   "main": "npm-wrapper.js",
