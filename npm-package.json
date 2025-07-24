@@ -1,6 +1,6 @@
 {
   "name": "codex-kimi-hardwarex",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Complete standalone Codex CLI with Kimi K2 model integration - no external dependencies needed",
   "main": "npm-wrapper.js",
   "bin": {
@@ -15,6 +15,7 @@
     "codex-cli/bin/",
     "codex-cli/dist/",
     "codex-cli/require-shim.js",
+    "codex-cli/package.json",
     "codex-cli/node_modules/",
     "README.md",
     "LICENSE"
