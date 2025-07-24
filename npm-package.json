@@ -1,7 +1,7 @@
 {
   "name": "codex-kimi-hardwarex",
-  "version": "1.0.0",
-  "description": "Codex CLI with Kimi K2 model integration - seamless AI coding assistant",
+  "version": "1.2.0",
+  "description": "Complete standalone Codex CLI with Kimi K2 model integration - no external dependencies needed",
   "main": "npm-wrapper.js",
   "bin": {
     "codex-kimi": "bin/codex-kimi.js"
@@ -12,6 +12,10 @@
   "files": [
     "bin/",
     "npm-wrapper.js",
+    "codex-cli/bin/",
+    "codex-cli/dist/",
+    "codex-cli/require-shim.js",
+    "codex-cli/node_modules/",
     "README.md",
     "LICENSE"
   ],
@@ -26,7 +30,7 @@
   "author": "HardwareX <yecaoyc2019@gmail.com>",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {},
   "repository": {

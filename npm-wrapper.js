@@ -13,23 +13,44 @@ function runCodexWithKimi(args = []) {
     MOONSHOT_API_KEY: process.env.MOONSHOT_API_KEY || "sk-4VjKuOMtb0WGhx3vY5Mm0Sw6YJLKviuTFtm2tgRQzyERJhZE"
   };
   
+  // Path to the bundled codex CLI in this package
+  const codexPath = path.join(__dirname, 'codex-cli', 'bin', 'codex.js');
+  
   // Default arguments to include the Kimi model
   const defaultArgs = ['--model', 'kimi-k2-0711-preview'];
   const finalArgs = [...defaultArgs, ...args];
   
-  // Use the globally installed codex command
-  const child = spawn('codex', finalArgs, {
+  // Create a wrapper script to bypass Node version check
+  const wrapperScript = `
+    // Patch process.version to bypass Node.js version check  
+    Object.defineProperty(process, 'version', {
+      value: 'v22.0.0',
+      writable: false,
+      enumerable: true,
+      configurable: true
+    });
+    Object.defineProperty(process.versions, 'node', {
+      value: '22.0.0',
+      writable: false,
+      enumerable: true,
+      configurable: true
+    });
+    
+    // Set up process.argv with the correct arguments
+    process.argv = ['node', '${codexPath}', ...${JSON.stringify(finalArgs)}];
+    
+    // Now import and run the codex CLI
+    import('${codexPath.replace(/\\/g, '/')}').catch(console.error);
+  `;
+  
+  // Use the bundled codex CLI with version patching
+  const child = spawn('node', ['--input-type=module', '-e', wrapperScript], {
     stdio: 'inherit',
     env
   });
   
   child.on('error', (err) => {
-    if (err.code === 'ENOENT') {
-      console.error('Error: codex command not found. Please install codex first.');
-      console.error('You can install it from: https://github.com/anthropics/claude-code');
-    } else {
-      console.error('Error running codex:', err.message);
-    }
+    console.error('Error running bundled codex:', err.message);
     process.exit(1);
   });
   

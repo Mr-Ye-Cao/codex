@@ -1,6 +1,6 @@
 # codex-kimi-hardwarex
 
-A seamless npm wrapper for the Codex CLI with automatic Kimi K2 model integration.
+A complete standalone Codex CLI with automatic Kimi K2 model integration. No external dependencies needed!
 
 ## Installation
 
@@ -8,10 +8,9 @@ A seamless npm wrapper for the Codex CLI with automatic Kimi K2 model integratio
 npm install -g codex-kimi-hardwarex
 ```
 
-## Prerequisites
+## No Prerequisites Required!
 
-This package requires the `codex` CLI to be installed separately. You can install it from:
-- https://github.com/anthropics/claude-code
+This package includes everything you need - no need to install the `codex` CLI separately. It's a complete standalone solution.
 
 ## Usage
 
@@ -56,7 +55,7 @@ MOONSHOT_API_KEY="sk-4VjKuOMtb0WGhx3vY5Mm0Sw6YJLKviuTFtm2tgRQzyERJhZE" codex --m
 ## Requirements
 
 - Node.js 22 or higher
-- The `codex` CLI installed and available in your PATH
+- That's it! Everything else is bundled.
 
 ## License
 
