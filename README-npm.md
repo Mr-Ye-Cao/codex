@@ -1,11 +1,11 @@
-# codex-kimi-cli
+# @hardwarex/codex-kimi
 
-A simple npm wrapper for the Codex CLI with automatic Kimi K2 model support.
+A seamless npm wrapper for the Codex CLI with automatic Kimi K2 model integration.
 
 ## Installation
 
 ```bash
-npm install -g codex-kimi-cli
+npm install -g @hardwarex/codex-kimi
 ```
 
 ## Prerequisites
