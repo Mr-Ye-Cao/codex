@@ -54,7 +54,7 @@ export const providers: Record<
   },
   moonshot: {
     name: "Moonshot AI",
-    baseURL: "https://api.moonshot.cn/v1",
+    baseURL: "https://api.moonshot.ai/v1",
     envKey: "MOONSHOT_API_KEY",
   },
 };
